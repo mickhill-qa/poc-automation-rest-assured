@@ -8,7 +8,7 @@ Funcionalidade: Teste de API Rest
 
 
 	Cenario: Login com Usuario Valido
-    Dado que o usuario seleciona o endpoint POST: "/api/login" 
-    Quando o usuario tenta logar com dados validos
-    Entao a API retorn status code 200
-    E a API retorna o token de acesso
+		Dado que o usuario seleciona o endpoint POST: "/api/login"
+		Quando o usuario tenta logar com dados validos
+		Entao a API retorn status code 200
+		E a API retorna o token de acesso
