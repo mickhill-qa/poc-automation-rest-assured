@@ -1,5 +1,6 @@
 package stepDefinitions;
 
+import org.json.JSONObject;
 import org.junit.Assert;
 
 import baseClass.BaseSteps;
@@ -7,57 +8,66 @@ import cucumber.api.java.pt.Dado;
 import cucumber.api.java.pt.E;
 import cucumber.api.java.pt.Entao;
 import cucumber.api.java.pt.Quando;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import endpointModels.LoginEndpoint;
 import io.restassured.response.Response;
 
 public class TesteAPIRestSteps extends BaseSteps {
-	
-	private Response response;
 
+	/**
+	 * Endpoint necessario
+	 **/
+	LoginEndpoint endpointLogin = new LoginEndpoint();
+
+	
+	
+	/**
+	 * Precondicao
+	 **/
 	@Dado("^que o usuario autentica com dados valido$")
-	public void o_usuario_autentica_com_dados_valido() throws Throwable {
+	public void o_usuario_autentica_com_dados_valido() {
 	}
 
 	@E("^o endereco da API e \"([^\"]*)\"$")
-	public void o_endereco_da_API_e(String _urlAPI) throws Throwable {
+	public void o_endereco_da_API_e(String _urlAPI) {
 		
-		RestAssured.baseURI = _urlAPI;
+		endpointLogin.setUrlAPI(_urlAPI);
 	}
 
-	@Dado("^que o usuario seleciona o endpoint POST: \"([^\"]*)\"$")
-	public void o_usuario_seleciona_o_endpoint_POST(String _endpoint) throws Throwable {
-		
-		RestAssured.basePath = _endpoint;
+	
+	
+	/**
+	 * FluxoBase
+	 **/
+	@Dado("^que o usuario seleciona o endpoint POST")
+	public void o_usuario_seleciona_o_endpoint_POST() {
 	}
 
 	@Quando("^o usuario tenta logar com dados validos$")
-	public void o_usuario_tenta_logar_com_dados_validos() throws Throwable {
+	public void o_usuario_tenta_logar_com_dados_validos() {
 		
-		String validRequest = 
-				"{\n" + 
-				"    \"email\": \"eve.holt@reqres.in\",\n" + 
-				"    \"password\": \"cityslicka\"\n" + 
-				"}";
+		JSONObject bodyJson = new JSONObject();
+		bodyJson.put("email", "eve.holt@reqres.in");
+		bodyJson.put("password", "cityslicka");
 		
-		response = RestAssured.given()
-				.contentType(ContentType.JSON)
-                .body(validRequest)
-                .post();
-		
-		BaseSteps.attachJsonInReport(validRequest);
+		endpointLogin.sendRequest(bodyJson.toString());
+		BaseSteps.attachJsonInReport(bodyJson.toString());
 	}
 
 	@Entao("^a API retorn status code (\\d+)$")
-	public void a_API_retorn_status_code(int _statusCode) throws Throwable {
+	public void a_API_retorn_status_code(int _statusCode) {
+		
+		Response response = endpointLogin.getResponse();
 		
 		Assert.assertEquals(_statusCode, response.getStatusCode());
 	}
 
 	@E("^a API retorna o token de acesso$")
-	public void a_API_retorna_o_token_de_acesso() throws Throwable {
+	public void a_API_retorna_o_token_de_acesso() {
 		
-		Assert.assertNotNull(response.jsonPath().get("token"));
-		BaseSteps.attachJsonInReport(response.prettyPrint());
+		Response response = endpointLogin.getResponse();
+		Object tokenExist = response.jsonPath().get("token");
+		
+		Assert.assertNotNull(tokenExist);
+		BaseSteps.attachJsonInReport(response.body().asString());
 	}
 }
