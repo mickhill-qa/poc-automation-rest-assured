@@ -23,12 +23,8 @@ public class TesteAPIRestSteps extends BaseSteps {
 	/**
 	 * Precondicao
 	 **/
-	@Dado("^que o usuario autentica com dados valido$")
-	public void o_usuario_autentica_com_dados_valido() {
-	}
-
-	@E("^o endereco da API e \"([^\"]*)\"$")
-	public void o_endereco_da_API_e(String _urlAPI) {
+	@Dado("^que a API possui o endereco \"([^\"]*)\"$")
+	public void a_API_possui_o_endereco(String _urlAPI) {
 		
 		endpointLogin.setUrlAPI(_urlAPI);
 	}
@@ -38,10 +34,6 @@ public class TesteAPIRestSteps extends BaseSteps {
 	/**
 	 * FluxoBase
 	 **/
-	@Dado("^que o usuario seleciona o endpoint POST")
-	public void o_usuario_seleciona_o_endpoint_POST() {
-	}
-
 	@Quando("^o usuario tenta logar com dados validos$")
 	public void o_usuario_tenta_logar_com_dados_validos() {
 		
@@ -53,8 +45,8 @@ public class TesteAPIRestSteps extends BaseSteps {
 		BaseSteps.attachJsonInReport(bodyJson.toString());
 	}
 
-	@Entao("^a API retorn status code (\\d+)$")
-	public void a_API_retorn_status_code(int _statusCode) {
+	@Entao("^a API retorna status code (\\d+)$")
+	public void a_API_retorna_status_code(int _statusCode) {
 		
 		Response response = endpointLogin.getResponse();
 		
