@@ -1,6 +1,5 @@
 package stepDefinitions;
 
-import java.io.FileNotFoundException;
 import baseClass.BaseSteps;
 import endpointModels.LoginEndpoint;
 import cucumber.api.java.pt.Dado;
@@ -10,6 +9,8 @@ import cucumber.api.java.pt.Quando;
 import io.restassured.response.Response;
 import org.json.JSONObject;
 import org.junit.Assert;
+import java.io.FileNotFoundException;
+import java.util.concurrent.TimeUnit;
 
 public class TesteAPIRestSteps extends BaseSteps {
 
@@ -59,6 +60,16 @@ public class TesteAPIRestSteps extends BaseSteps {
 		
 		Assert.assertNotNull(tokenExist);
 		BaseSteps.attachJsonInCucumberReport(response.body().asString());
+	}
+	
+	@E("^a API retorna com tempo de resposta menor que (\\d+) segundos$")
+	public void a_API_retorna_com_tempo_de_resposta_menor_que_segundos(int _tempoEsperadoEmSegundos) {
+		
+		Response response = endpointLogin.getResponse();
+		long tempoDeRespostaAPI = response.timeIn(TimeUnit.SECONDS);
+		
+		Assert.assertTrue(tempoDeRespostaAPI < _tempoEsperadoEmSegundos);
+		BaseSteps.attachStringInCucumberReport(tempoDeRespostaAPI + " segundo(s)");
 	}
 
 	@E("^a API retorna o JSON de acordo com o contrato$")
