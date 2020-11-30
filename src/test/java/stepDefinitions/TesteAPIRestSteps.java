@@ -3,15 +3,13 @@ package stepDefinitions;
 import java.io.FileNotFoundException;
 import baseClass.BaseSteps;
 import endpointModels.LoginEndpoint;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.junit.Assert;
+import cucumber.api.java.pt.Dado;
 import cucumber.api.java.pt.E;
 import cucumber.api.java.pt.Entao;
-import cucumber.api.java.pt.Dado;
 import cucumber.api.java.pt.Quando;
 import io.restassured.response.Response;
+import org.json.JSONObject;
+import org.junit.Assert;
 
 public class TesteAPIRestSteps extends BaseSteps {
 
@@ -39,10 +37,10 @@ public class TesteAPIRestSteps extends BaseSteps {
 	@Quando("^o usuario tenta logar com dados validos$")
 	public void o_usuario_tenta_logar_com_dados_validos() throws FileNotFoundException {
 		
-		JSONObject bodyJson = BaseSteps.loadJsonRequestBody("login-dados-validos.json");
+		JSONObject bodyJson = BaseSteps.loadJson("requestBody/login-dados-validos.json");
 		
 		endpointLogin.sendRequest(bodyJson.toString());
-		BaseSteps.attachJsonInReport(bodyJson.toString());
+		BaseSteps.attachJsonInCucumberReport(bodyJson.toString());
 	}
 
 	@Entao("^a API retorna status code (\\d+)$")
@@ -60,7 +58,7 @@ public class TesteAPIRestSteps extends BaseSteps {
 		Object tokenExist = response.jsonPath().get("token");
 		
 		Assert.assertNotNull(tokenExist);
-		BaseSteps.attachJsonInReport(response.body().asString());
+		BaseSteps.attachJsonInCucumberReport(response.body().asString());
 	}
 
 	@E("^a API retorna o JSON de acordo com o contrato$")
@@ -68,9 +66,9 @@ public class TesteAPIRestSteps extends BaseSteps {
 		
 		Response response 		= endpointLogin.getResponse();
 		JSONObject jsonResponse = new JSONObject( response.body().asString() );
+		JSONObject jsonSchema 	= BaseSteps.loadJson("apiContracts/login-schema.json");
 		
-		JSONObject jsonSchema 	= BaseSteps.loadJsonApiContracts("login-schema.json");
-	    Schema schema 			= SchemaLoader.load(jsonSchema);
-	    schema.validate(jsonResponse);
+	    BaseSteps.assertJsonEqualsSchema(jsonResponse, jsonSchema);
+		BaseSteps.attachJsonInCucumberReport(jsonSchema.toString());
 	}
 }
