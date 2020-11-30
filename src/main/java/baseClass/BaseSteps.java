@@ -33,10 +33,10 @@ public class BaseSteps {
 		
 	}
 
-	public static JSONObject loadJson(String _nameFileSchemaJson) throws FileNotFoundException {
+	public static JSONObject loadJson(String _nameFile) throws FileNotFoundException {
 
 		InputStream inputStream = new FileInputStream(
-				new File("src/test/resources/jsons/" + _nameFileSchemaJson));
+				new File("src/test/resources/jsons/" + _nameFile));
 
 		return new JSONObject(new JSONTokener(inputStream));
 	}
