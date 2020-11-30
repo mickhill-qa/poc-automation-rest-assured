@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.junit.Assert;
 
 import cucumber.api.Scenario;
 
@@ -13,31 +17,38 @@ public class BaseSteps {
 
 	public static Scenario scenario;
 
-	public static void attachJsonInReport(String _json) {
+	public static void attachStringInCucumberReport(String _string) {
 
 		try {
-			// Identando o JSON
-			_json = new JSONObject(_json).toString(2);
-
-			scenario.write(_json);
+			scenario.write(_string);
 		} catch (ClassCastException cce) {
 			cce.printStackTrace();
 		}
 	}
 	
-	public static JSONObject loadJsonApiContracts(String _nameFileSchemaJson) throws FileNotFoundException {
+	public static void attachJsonInCucumberReport(String _json) {
 		
-		InputStream inputStream = new FileInputStream(
-				new File("src/test/resources/jsons/apiContracts/" + _nameFileSchemaJson));
+		_json = new JSONObject(_json).toString(2);
+		attachStringInCucumberReport(_json);
 		
-		return new JSONObject(new JSONTokener(inputStream));
 	}
 
-	public static JSONObject loadJsonRequestBody(String _nameFileSchemaJson) throws FileNotFoundException {
+	public static JSONObject loadJson(String _nameFileSchemaJson) throws FileNotFoundException {
 
 		InputStream inputStream = new FileInputStream(
-				new File("src/test/resources/jsons/requestBody/" + _nameFileSchemaJson));
+				new File("src/test/resources/jsons/" + _nameFileSchemaJson));
 
 		return new JSONObject(new JSONTokener(inputStream));
+	}
+	
+	public static void assertJsonEqualsSchema(JSONObject _json, JSONObject _schema) {
+		
+	    try {
+	    	Schema schema = SchemaLoader.load(_schema);
+	    	schema.validate(_json);
+		} 
+	    catch (ValidationException e) {
+	    	Assert.fail(e.getErrorMessage() + " - " + e.getAllMessages());
+		}
 	}
 }
