@@ -1,5 +1,6 @@
 package stepDefinitions;
 
+import baseClass.BaseAPI;
 import baseClass.BaseSteps;
 import endpointModels.LoginEndpoint;
 import cucumber.api.java.pt.Dado;
@@ -27,7 +28,7 @@ public class TesteAPIRestSteps extends BaseSteps {
 	@Dado("^que a API possui o endereco \"([^\"]*)\"$")
 	public void a_API_possui_o_endereco(String _urlAPI) {
 		
-		endpointLogin.setUrlAPI(_urlAPI);
+		BaseAPI.setUrlAPI(_urlAPI);
 	}
 
 	
